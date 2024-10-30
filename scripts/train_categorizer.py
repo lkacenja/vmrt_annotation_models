@@ -6,37 +6,17 @@ import torch
 from tqdm import tqdm
 from sklearn import metrics
 from torch.utils.data import DataLoader
-from transformers import BertTokenizer
 
 from vmrt_annotation_models.dataset import CategorizationDataset
-from vmrt_annotation_models.model import BERTModel
+from vmrt_annotation_models.config import Config
 
+"""
+A script for training a BERT model in multilabel text classification.
 
-class Config:
-    """
-    Hyperparemters and other environmental configuration options.
-    """
-    model_name = 'havocy28/VetBERT'
-    max_len = 200
-    train_batch_size = 8
-    valid_batch_size = 4
-    epochs = 4
-    learning_rate = 1e-05
-    training_split = 0.8
+Example usage:
 
-    @staticmethod
-    def get_tokenizer():
-        return BertTokenizer.from_pretrained(Config.model_name)
-
-    @staticmethod
-    def get_model():
-        return BERTModel(Config.model_name, 3)
-
-    @staticmethod
-    def get_device():
-        device = 'mps' if torch.backends.mps.is_available() else 'cpu'
-        print(f'Device is {device}... prepare for power!')
-        return device
+python scripts/train_categorizer.py  data/category_output.csv ./models
+"""
 
 
 def process_data(training_data: pd.DataFrame) -> pd.DataFrame:
@@ -216,7 +196,7 @@ def parse_args() -> argparse.Namespace:
         The parsed args.
     """
     parser = argparse.ArgumentParser(
-        prog='Removes unresolved columns from dictionaries.')
+        prog='Trains a BERT model for multilabel text classification.')
     parser.add_argument('training_data', help='Path to csv with training data.')
     parser.add_argument('model_path', help='Where to place the model.')
     return parser.parse_args()
